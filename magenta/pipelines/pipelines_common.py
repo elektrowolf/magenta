@@ -106,7 +106,7 @@ class RandomPartition(pipeline.Pipeline):
     return [statistics.Counter(increment_partition + '_count', 1)]
 
 class IDPipeline(pipeline.Pipeline):
-  """A Pipeline that assigns unique IDs to EventSequences and logs the ID mappings in the pipeline stats."""
+  """A Pipeline that assigns unique IDs to EventSequences and logs the ID mappings."""
 
   def __init__(self, name=None):
     super(IDPipeline, self).__init__(
@@ -114,12 +114,10 @@ class IDPipeline(pipeline.Pipeline):
         output_type=melodies_lib.Melody,
         name=name)
     self.counter = 0
-    self._set_stats({})
+    self.mappings = {}
 
   def transform(self, event_sequence):
-    mappings = self.get_stats()
-    mappings[self.counter] = event_sequence.filename
-    self._set_stats(mappings)
+    self.mappings[self.counter] = event_sequence.filename
 
     event_sequence.id = event_sequence
     self.counter += 1
