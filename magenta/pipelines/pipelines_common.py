@@ -20,6 +20,7 @@ import numpy as np
 import tensorflow as tf
 
 from magenta.music import sequences_lib
+from magenta.music import events_lib
 from magenta.pipelines import pipeline
 from magenta.pipelines import statistics
 from magenta.protobuf import music_pb2
