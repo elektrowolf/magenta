@@ -27,6 +27,7 @@ from magenta.models.melody_rnn import melody_rnn_model
 from magenta.models.melody_rnn import melody_rnn_sequence_generator
 from magenta.protobuf import generator_pb2
 from magenta.protobuf import music_pb2
+from magenta.music import constants
 
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string(
@@ -175,8 +176,8 @@ def run_with_flags(generator):
       qpm = primer_sequence.tempos[0].qpm
   else:
     tf.logging.warning(
-        'No priming sequence specified. Defaulting to a single middle C.')
-    primer_melody = magenta.music.Melody([60])
+        'No priming sequence specified. Defaulting to MELODY_START.')
+    primer_melody = magenta.music.Melody([MELODY_START])
     primer_sequence = primer_melody.to_sequence(qpm=qpm)
 
   # Derive the total number of seconds to generate based on the QPM of the
