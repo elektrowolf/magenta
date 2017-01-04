@@ -123,7 +123,7 @@ def main(unused_argv):
   if config.learn_initial_state:
     file = open(FLAGS.output_dir + '/melody-ids.csv', 'w')
     for id, filename in id_pipeline_instance.mappings.iteritems():
-      file.write('%d, %w\n' % (id, filename))
+      file.write('%d, %s\n' % (id, filename))
     file.close()
 
 def console_entry_point():
