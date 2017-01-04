@@ -47,7 +47,7 @@ tf.app.flags.DEFINE_string(
     'hyperparameters if `--config` is also supplied.')
 tf.app.flags.DEFINE_boolean(
     'learn_initial_state',
-    true,
+    True,
     'When set to true, learns the initial state of the RNN. When set to false, '
     'zeroes are used.')
 
