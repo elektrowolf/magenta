@@ -219,7 +219,7 @@ class EventSequenceEncoderDecoder(object):
     labels = []
     
     for i in range(len(events) - 1):
-      inputs.append(self.events_to_input(events_with_start, i))
+      inputs.append(self.events_to_input(events, i))
       labels.append(self.events_to_label(events, i + 1))
     return sequence_example_lib.make_sequence_example(inputs, labels, events.id)
 
