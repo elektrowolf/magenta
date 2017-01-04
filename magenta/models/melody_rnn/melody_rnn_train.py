@@ -77,6 +77,7 @@ def main(unused_argv):
     # Count records for embedding
     config.num_records = 0
     for fn in sequence_example_file_paths:
+      for record in tf.python_io.tf_record_iterator(fn):
         config.num_records += 1
     tf.logging.info('Counted %d records', config.num_records)
 
