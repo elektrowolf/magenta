@@ -64,6 +64,7 @@ def get_padded_batch(file_list, batch_size, input_size,
     labels: A tensor of shape [batch_size, num_steps] of int64s.
     lengths: A tensor of shape [batch_size] of int32s. The lengths of each
         SequenceExample before padding.
+    ids: A tensor of shape [batch_size] of int64s. The unique id of each sequence.
   """
   file_queue = tf.train.string_input_producer(file_list)
   reader = tf.TFRecordReader()
@@ -89,7 +90,7 @@ def get_padded_batch(file_list, batch_size, input_size,
   queue = tf.PaddingFIFOQueue(
       capacity=1000,
       dtypes=[tf.float32, tf.int64, tf.int32, tf.int64],
-      shapes=[(None, input_size), (None,), ()])
+      shapes=[(None, input_size), (None,), (), ()])
 
   enqueue_ops = [queue.enqueue([sequence['inputs'],
                                 sequence['labels'],
