@@ -20,7 +20,7 @@ import numpy as np
 import tensorflow as tf
 
 from magenta.music import sequences_lib
-from magenta.music import events_lib
+from magenta.music import melodies_lib
 from magenta.pipelines import pipeline
 from magenta.pipelines import statistics
 from magenta.protobuf import music_pb2
@@ -110,8 +110,8 @@ class IDPipeline(pipeline.Pipeline):
 
   def __init__(self, name=None):
     super(IDPipeline, self).__init__(
-        input_type=events_lib.EventSequence,
-        output_type=events_lib.EventSequence,
+        input_type=melodies_lib.Melody,
+        output_type=melodies_lib.Melody,
         name=name)
     self.counter = 0
     self._set_stats({})
