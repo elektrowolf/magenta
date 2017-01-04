@@ -75,7 +75,7 @@ def main(unused_argv):
 
   if FLAGS.learn_initial_state:
     # Count records for embedding
-    config.num_records = 1
+    config.num_records = -1
 
     context_features = {
       'id': tf.FixedLenFeature(shape=[], dtype=tf.int64)
@@ -88,7 +88,7 @@ def main(unused_argv):
             context_features=context_features)
           id = context['id'].eval()
           if id > config.num_records:
-            config.num_records = id
+            config.num_records = id + 1
 
     tf.logging.info('Counted %d records', config.num_records)
 
