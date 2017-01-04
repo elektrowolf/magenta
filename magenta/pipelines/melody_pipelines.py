@@ -55,4 +55,9 @@ class MelodyExtractor(pipeline.Pipeline):
       melodies = []
       stats = [statistics.Counter('non_integer_steps_per_bar', 1)]
     self._set_stats(stats)
+
+    # Keep filenames
+    for melody in melodies:
+      melody.filename = quantized_sequence.filename
+
     return melodies

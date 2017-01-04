@@ -16,7 +16,7 @@
 import tensorflow as tf
 
 
-def make_sequence_example(inputs, labels):
+def make_sequence_example(inputs, labels, id=-1):
   """Returns a SequenceExample for the given inputs and labels.
 
   Args:
@@ -37,7 +37,11 @@ def make_sequence_example(inputs, labels):
       'labels': tf.train.FeatureList(feature=label_features)
   }
   feature_lists = tf.train.FeatureLists(feature_list=feature_list)
-  return tf.train.SequenceExample(feature_lists=feature_lists)
+  ex = tf.train.SequenceExample(feature_lists=feature_lists)
+
+  ex.context.feature['id'].int64_list.value.append(id)
+
+  return ex
 
 
 def get_padded_batch(file_list, batch_size, input_size,
@@ -71,7 +75,11 @@ def get_padded_batch(file_list, batch_size, input_size,
       'labels': tf.FixedLenSequenceFeature(shape=[],
                                            dtype=tf.int64)}
 
-  _, sequence = tf.parse_single_sequence_example(
+  context_features = {
+      'id': tf.FixedLenFeature(shape=[], dtype=tf.int64)
+  }
+
+  context, sequence = tf.parse_single_sequence_example(
       serialized_example, sequence_features=sequence_features)
 
   length = tf.shape(sequence['inputs'])[0]
@@ -83,6 +91,7 @@ def get_padded_batch(file_list, batch_size, input_size,
 
   enqueue_ops = [queue.enqueue([sequence['inputs'],
                                 sequence['labels'],
-                                length])] * num_enqueuing_threads
+                                length,
+                                context['id']])] * num_enqueuing_threads
   tf.train.add_queue_runner(tf.train.QueueRunner(queue, enqueue_ops))
   return queue.dequeue_many(batch_size)

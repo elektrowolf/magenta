@@ -94,6 +94,7 @@ class Melody(events_lib.SimpleEventSequence):
        be the first step of a bar.
     steps_per_quarter: Number of steps in in a quarter note.
     steps_per_bar: Number of steps in a bar (measure) of music.
+    filename: Original file
   """
 
   def __init__(self, events=None, **kwargs):

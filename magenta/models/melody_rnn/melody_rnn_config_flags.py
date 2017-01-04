@@ -45,6 +45,11 @@ tf.app.flags.DEFINE_string(
     'String representation of a Python dictionary containing hyperparameter '
     'to value mapping. This mapping is merged with the default '
     'hyperparameters if `--config` is also supplied.')
+tf.app.flags.DEFINE_boolean(
+    'learn_initial_state',
+    true,
+    'When set to true, learns the initial state of the RNN. When set to false, '
+    'zeroes are used.')
 
 
 class MelodyRnnConfigFlagsException(Exception):

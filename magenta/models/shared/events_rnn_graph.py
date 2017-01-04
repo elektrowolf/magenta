@@ -89,7 +89,7 @@ def build_graph(mode, config, sequence_example_file_paths=None):
     state_is_tuple = True
 
     if mode == 'train' or mode == 'eval':
-      inputs, labels, lengths = magenta.common.get_padded_batch(
+      inputs, labels, lengths, ids = magenta.common.get_padded_batch(
           sequence_example_file_paths, hparams.batch_size, input_size)
 
     elif mode == 'generate':

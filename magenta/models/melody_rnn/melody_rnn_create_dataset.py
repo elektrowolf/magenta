@@ -29,6 +29,7 @@ from magenta.pipelines import dag_pipeline
 from magenta.pipelines import melody_pipelines
 from magenta.pipelines import pipeline
 from magenta.pipelines import pipelines_common
+from magenta.pipelines import id_pipeline
 from magenta.protobuf import music_pb2
 
 FLAGS = tf.app.flags.FLAGS
@@ -82,11 +83,13 @@ def get_pipeline(config, eval_ratio):
 
   Returns:
     A pipeline.Pipeline instance.
+    A id_pipeline.IDPipeline instance.
   """
   quantizer = pipelines_common.Quantizer(steps_per_quarter=4)
   melody_extractor = melody_pipelines.MelodyExtractor(
       min_bars=7, max_steps=512, min_unique_pitches=5,
       gap_bars=1.0, ignore_polyphonic_notes=False)
+  id = id_pipeline.IDPipeline()
   encoder_pipeline = EncoderPipeline(config)
   partitioner = pipelines_common.RandomPartition(
       tf.train.SequenceExample,
@@ -95,17 +98,19 @@ def get_pipeline(config, eval_ratio):
 
   dag = {quantizer: dag_pipeline.DagInput(music_pb2.NoteSequence),
          melody_extractor: quantizer,
-         encoder_pipeline: melody_extractor,
+         id: melody_extractor,
+         encoder_pipeline: id,
          partitioner: encoder_pipeline,
          dag_pipeline.DagOutput(): partitioner}
-  return dag_pipeline.DAGPipeline(dag)
+
+  return dag_pipeline.DAGPipeline(dag), id
 
 
 def main(unused_argv):
   tf.logging.set_verbosity(FLAGS.log)
 
   config = melody_rnn_config_flags.config_from_flags()
-  pipeline_instance = get_pipeline(
+  pipeline_instance, id_pipeline_instance = get_pipeline(
       config, FLAGS.eval_ratio)
 
   FLAGS.input = os.path.expanduser(FLAGS.input)
@@ -115,6 +120,12 @@ def main(unused_argv):
       pipeline.tf_record_iterator(FLAGS.input, pipeline_instance.input_type),
       FLAGS.output_dir)
 
+  # Write id/file mappings
+  if config.learn_initial_state:
+    file = open(FLAGS.output_dir + '/melody-ids.csv', 'w')
+    for id, filename in id_pipeline_instance.get_state().iteritems():
+      file.write('%d, %w\n' % (id, filename))
+    file.close()
 
 def console_entry_point():
   tf.app.run(main)

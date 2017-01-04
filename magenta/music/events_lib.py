@@ -161,6 +161,8 @@ class SimpleEventSequence(EventSequence):
       self._start_step = start_step
       self._end_step = start_step
 
+    self.id = -1
+
   def _reset(self):
     """Clear events and reset object state."""
     self._events = []

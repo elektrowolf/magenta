@@ -219,7 +219,7 @@ class EventSequenceEncoderDecoder(object):
     for i in range(len(events) - 1):
       inputs.append(self.events_to_input(events, i))
       labels.append(self.events_to_label(events, i + 1))
-    return sequence_example_lib.make_sequence_example(inputs, labels)
+    return sequence_example_lib.make_sequence_example(inputs, labels, events.id)
 
   def get_inputs_batch(self, event_sequences, full_length=False):
     """Returns an inputs batch for the given event sequences.
@@ -676,7 +676,7 @@ class ConditionalEventSequenceEncoderDecoder(object):
     for i in range(len(target_events) - 1):
       inputs.append(self.events_to_input(control_events, target_events, i))
       labels.append(self.events_to_label(target_events, i + 1))
-    return sequence_example_lib.make_sequence_example(inputs, labels)
+    return sequence_example_lib.make_sequence_example(inputs, labels, events.id)
 
   def get_inputs_batch(self, control_events, target_event_sequences,
                        full_length=False):
