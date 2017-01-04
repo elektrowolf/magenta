@@ -29,7 +29,7 @@ MELODY_NO_EVENT = -2
 MELODY_START    = -3
 
 # Other melody-related constants.
-MIN_MELODY_EVENT = -2
+MIN_MELODY_EVENT = -3
 MAX_MELODY_EVENT = 127
 MIN_MIDI_PITCH = 0  # Inclusive.
 MAX_MIDI_PITCH = 127  # Inclusive.
