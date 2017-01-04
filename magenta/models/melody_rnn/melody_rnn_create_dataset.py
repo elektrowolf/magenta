@@ -70,6 +70,7 @@ class EncoderPipeline(pipeline.Pipeline):
         self._max_note,
         self._transpose_to_key)
     encoded = self._melody_encoder_decoder.encode(melody)
+    encoded.prepend_melody_start()
     return [encoded]
 
 

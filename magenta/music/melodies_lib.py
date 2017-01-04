@@ -371,6 +371,9 @@ class Melody(events_lib.SimpleEventSequence):
       length += -len(self) % steps_per_bar
     self.set_length(length)
 
+  def prepend_start_event(self):
+    self._events = [ MELODY_START ] + self._events
+
   def to_sequence(self,
                   velocity=100,
                   instrument=0,
