@@ -29,7 +29,6 @@ from magenta.pipelines import dag_pipeline
 from magenta.pipelines import melody_pipelines
 from magenta.pipelines import pipeline
 from magenta.pipelines import pipelines_common
-from magenta.pipelines import id_pipeline
 from magenta.protobuf import music_pb2
 
 FLAGS = tf.app.flags.FLAGS
@@ -89,7 +88,7 @@ def get_pipeline(config, eval_ratio):
   melody_extractor = melody_pipelines.MelodyExtractor(
       min_bars=7, max_steps=512, min_unique_pitches=5,
       gap_bars=1.0, ignore_polyphonic_notes=False)
-  id = id_pipeline.IDPipeline()
+  id_pipeline = pipelines_common.IDPipeline()
   encoder_pipeline = EncoderPipeline(config)
   partitioner = pipelines_common.RandomPartition(
       tf.train.SequenceExample,
@@ -98,12 +97,12 @@ def get_pipeline(config, eval_ratio):
 
   dag = {quantizer: dag_pipeline.DagInput(music_pb2.NoteSequence),
          melody_extractor: quantizer,
-         id: melody_extractor,
-         encoder_pipeline: id,
+         id_pipeline: melody_extractor,
+         encoder_pipeline: id_pipeline,
          partitioner: encoder_pipeline,
          dag_pipeline.DagOutput(): partitioner}
 
-  return dag_pipeline.DAGPipeline(dag), id
+  return dag_pipeline.DAGPipeline(dag), id_pipeline
 
 
 def main(unused_argv):
