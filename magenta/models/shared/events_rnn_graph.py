@@ -107,7 +107,7 @@ def build_graph(mode, config, sequence_example_file_paths=None):
                          attn_length=hparams.attn_length,
                          state_is_tuple=state_is_tuple)
 
-    if !config.learn_initial_state:
+    if not config.learn_initial_state:
       initial_state = cell.zero_state(hparams.batch_size, tf.float32)
     else:
       embedding_shape = cell.zero_state(config.num_records, tf.float32).get_shape()
