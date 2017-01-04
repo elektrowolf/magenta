@@ -32,6 +32,7 @@ from magenta.music import melodies_lib
 NUM_SPECIAL_MELODY_EVENTS = constants.NUM_SPECIAL_MELODY_EVENTS
 MELODY_NOTE_OFF = constants.MELODY_NOTE_OFF
 MELODY_NO_EVENT = constants.MELODY_NO_EVENT
+MELODY_START = constants.MELODY_START
 MIN_MIDI_PITCH = constants.MIN_MIDI_PITCH
 MAX_MIDI_PITCH = constants.MAX_MIDI_PITCH
 NOTES_PER_OCTAVE = constants.NOTES_PER_OCTAVE
@@ -161,7 +162,8 @@ class KeyMelodyEncoderDecoder(encoder_decoder.EventSequenceEncoderDecoder):
             self._binary_counter_bits +       # binary counters
             1 +                               # start of bar or not
             NOTES_PER_OCTAVE +                # total key estimate
-            NOTES_PER_OCTAVE)                 # recent key estimate
+            NOTES_PER_OCTAVE +                # recent key estimate
+            1)                                # start of melody or not
 
   @property
   def num_classes(self):
@@ -192,6 +194,7 @@ class KeyMelodyEncoderDecoder(encoder_decoder.EventSequenceEncoderDecoder):
     49: The next event is the start of a bar.
     [50, 61]: The keys the current melody is in.
     [62, 73]: The keys the last 3 notes are in.
+    74: Whether the melody is starting.
     Args:
       events: A magenta.music.Melody object.
       position: An integer event position in the melody.
@@ -277,6 +280,10 @@ class KeyMelodyEncoderDecoder(encoder_decoder.EventSequenceEncoderDecoder):
       if key_val == max_val:
         input_[offset] = 1.0
       offset += 1
+
+    if events[position] == MELODY_START:
+      input_[offset] = 1.0
+    offset += 1
 
     assert offset == self.input_size
 

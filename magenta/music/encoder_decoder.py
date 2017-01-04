@@ -58,6 +58,7 @@ from magenta.pipelines import pipeline
 
 DEFAULT_STEPS_PER_BAR = constants.DEFAULT_STEPS_PER_BAR
 DEFAULT_LOOKBACK_DISTANCES = [DEFAULT_STEPS_PER_BAR, DEFAULT_STEPS_PER_BAR * 2]
+MELODY_START = constants.MELODY_START
 
 
 class OneHotEncoding(object):
@@ -216,9 +217,12 @@ class EventSequenceEncoderDecoder(object):
     """
     inputs = []
     labels = []
-    for i in range(len(events) - 1):
-      inputs.append(self.events_to_input(events, i))
-      labels.append(self.events_to_label(events, i + 1))
+    for i in range(len(events)):
+      if i == 0:
+        inputs.append(MELODY_START)
+      else:
+        inputs.append(self.events_to_input(events, i - 1))
+      labels.append(self.events_to_label(events, i))
     return sequence_example_lib.make_sequence_example(inputs, labels, events.id)
 
   def get_inputs_batch(self, event_sequences, full_length=False):
