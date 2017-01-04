@@ -51,3 +51,9 @@ py_binary(
         "//magenta/music:sequence_generator_bundle",
     ],
 )
+
+py_binary(
+    name = "export_embedding",
+    srcs = ["export_embedding.py"],
+    deps = [],
+)
