@@ -77,7 +77,7 @@ def main(unused_argv):
     # Count records for embedding
     config.num_records = 0
     for fn in sequence_example_file_paths:
-        config.num_records++
+        config.num_records += 1
     tf.logging.info('Counted %d records', config.num_records)
 
   mode = 'eval' if FLAGS.eval else 'train'
