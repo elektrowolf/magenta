@@ -145,4 +145,6 @@ def config_from_flags():
       config.details.id = FLAGS.generator_id
     if FLAGS.generator_description is not None:
       config.details.description = FLAGS.generator_description
+    if FLAGS.learn_initial_state is not None:
+      config.learn_initial_state = True
     return config
