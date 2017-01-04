@@ -219,7 +219,7 @@ class EventSequenceEncoderDecoder(object):
     labels = []
     for i in range(len(events)):
       if i == 0:
-        inputs.append(MELODY_START)
+        inputs.append(self.events_to_input(MELODY_START))
       else:
         inputs.append(self.events_to_input(events, i - 1))
       labels.append(self.events_to_label(events, i))
