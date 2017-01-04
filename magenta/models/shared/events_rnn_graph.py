@@ -52,37 +52,6 @@ def make_rnn_cell(rnn_layer_sizes,
 
   return cell
 
-def get_initial_cell_state(cell, initializer, batch_size, dtype):
-  """Return state tensor(s), initialized with initializer.
-  Args:
-    cell: RNNCell.
-    batch_size: int, float, or unit Tensor representing the batch size.
-    initializer: function with two arguments, shape and dtype, that
-        determines how the state is initialized.
-    dtype: the data type to use for the state.
-  Returns:
-    If `state_size` is an int or TensorShape, then the return value is a
-    `N-D` tensor of shape `[batch_size x state_size]` initialized
-    according to the initializer.
-    If `state_size` is a nested list or tuple, then the return value is
-    a nested list or tuple (of the same structure) of `2-D` tensors with
-  the shapes `[batch_size x s]` for each s in `state_size`.
-  """
-  state_size = cell.state_size
-  if nest.is_sequence(state_size):
-      state_size_flat = nest.flatten(state_size)
-      init_state_flat = [
-          initializer(_state_size_with_prefix(s), batch_size, dtype, i)
-              for i, s in enumerate(state_size_flat)]
-      init_state = nest.pack_sequence_as(structure=state_size,
-                                  flat_sequence=init_state_flat)
-  else:
-      init_state_size = _state_size_with_prefix(state_size)
-      init_state = initializer(init_state_size, batch_size, dtype, None)
-
-  return init_state
-
-
 def build_graph(mode, config, sequence_example_file_paths=None):
   """Builds the TensorFlow graph.
 
@@ -123,8 +92,6 @@ def build_graph(mode, config, sequence_example_file_paths=None):
           sequence_example_file_paths, hparams.batch_size, input_size)
 
     elif mode == 'generate':
-      c_state = tf.placeholder(...)
-      h_state = tf.placeholder(...)
       initial_state = tf.nn.rnn_cell.LSTMStateTuple(c_state, h_state)
       inputs = tf.placeholder(tf.float32, [hparams.batch_size, None,
                                            input_size])
