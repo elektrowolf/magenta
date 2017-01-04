@@ -88,7 +88,7 @@ def get_padded_batch(file_list, batch_size, input_size,
 
   queue = tf.PaddingFIFOQueue(
       capacity=1000,
-      dtypes=[tf.float32, tf.int64, tf.int32],
+      dtypes=[tf.float32, tf.int64, tf.int32, tf.int64],
       shapes=[(None, input_size), (None,), ()])
 
   enqueue_ops = [queue.enqueue([sequence['inputs'],
