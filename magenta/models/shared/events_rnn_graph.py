@@ -114,10 +114,10 @@ def build_graph(mode, config, sequence_example_file_paths=None):
       initial_state = cell.zero_state(hparams.batch_size, tf.float32)
     else:
       embedding_shape = cell.zero_state(config.num_records, tf.float32).get_shape()
-      embedding = tf.Variable(tf.zeros(embedding_shape), tf.float32)
+      embedding = tf.Variable(tf.zeros(embedding_shape), tf.float32, name='embedding')
       initial_state = tf.nn.embedding_lookup(embedding, ids)
 
-      embedding_flat = tf.reshape(embedding, [config.num_records, -1], name='embedding')
+      embedding_flat = tf.reshape(embedding, [config.num_records, -1])
       tf.add_to_collection('embedding', embedding_flat)
 
     outputs, final_state = tf.nn.dynamic_rnn(
