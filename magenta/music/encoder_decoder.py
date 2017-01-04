@@ -217,11 +217,11 @@ class EventSequenceEncoderDecoder(object):
     """
     inputs = []
     labels = []
+
+    events_with_start = [MELODY_START] + events
+
     for i in range(len(events)):
-      if i == 0:
-        inputs.append(self.events_to_input([MELODY_START], 0))
-      else:
-        inputs.append(self.events_to_input(events, i - 1))
+      inputs.append(self.events_to_input(events_with_start, i))
       labels.append(self.events_to_label(events, i))
     return sequence_example_lib.make_sequence_example(inputs, labels, events.id)
 
