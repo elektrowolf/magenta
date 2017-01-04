@@ -73,6 +73,13 @@ def main(unused_argv):
 
   config = melody_rnn_config_flags.config_from_flags()
 
+  if FLAGS.learn_initial_state:
+    # Count records for embedding
+    config.num_records = 0
+    for fn in sequence_example_file_paths:
+        config.num_records++
+    tf.logging.info('Counted %d records', config.num_records)
+
   mode = 'eval' if FLAGS.eval else 'train'
   graph = events_rnn_graph.build_graph(
       mode, config, sequence_example_file_paths)
