@@ -121,6 +121,6 @@ class IDPipeline(pipeline.Pipeline):
     self._set_stats(mappings)
 
     event_sequence.id = event_sequence
-  self.counter += 1
+    self.counter += 1
 
-  return [event_sequence]
+    return [event_sequence]
