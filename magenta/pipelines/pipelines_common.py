@@ -119,7 +119,7 @@ class IDPipeline(pipeline.Pipeline):
   def transform(self, event_sequence):
     self.mappings[self.counter] = event_sequence.filename
 
-    event_sequence.id = event_sequence
+    event_sequence.id = self.counter
     self.counter += 1
 
     return [event_sequence]
