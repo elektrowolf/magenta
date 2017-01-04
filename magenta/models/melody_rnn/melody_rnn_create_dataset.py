@@ -122,7 +122,7 @@ def main(unused_argv):
   # Write id/file mappings
   if config.learn_initial_state:
     file = open(FLAGS.output_dir + '/melody-ids.csv', 'w')
-    for id, filename in id_pipeline_instance.mappings:
+    for id, filename in id_pipeline_instance.mappings.iteritems():
       file.write('%d, %w\n' % (id, filename))
     file.close()
 
