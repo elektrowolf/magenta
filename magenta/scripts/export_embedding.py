@@ -23,7 +23,7 @@ with tf.Graph().as_default() as g:
   with tf.Session() as sess:
   	# Trick to load variable without loading full graph: use validate_shape=False
   	# However, this also has to be set in the graph
-    embedding = tf.Variable(0, name='embedding', validate_shape=False)
+    embedding = tf.Variable(0., tf.float32, name='embedding', validate_shape=False)
 
     # Load data
     saver = tf.train.Saver()
