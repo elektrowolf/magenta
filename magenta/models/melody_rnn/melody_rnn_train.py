@@ -14,6 +14,7 @@
 """Train and evaluate a melody RNN model."""
 
 import os
+import subprocess
 
 # internal imports
 import tensorflow as tf
@@ -75,21 +76,9 @@ def main(unused_argv):
 
   if FLAGS.learn_initial_state:
     # Count records for embedding
-    config.num_records = 0
-
-    context_features = {
-      'id': tf.FixedLenFeature(shape=[], dtype=tf.int64)
-    }
-
-    with tf.Session().as_default():
-      for fn in sequence_example_file_paths:
-        for record in tf.python_io.tf_record_iterator(fn):
-          context, _ = tf.parse_single_sequence_example(record, 
-            context_features=context_features)
-          id = context['id'].eval()
-          if id + 1 > config.num_records:
-            config.num_records = id + 1
-
+    id_file = os.path.join(run_dir, 'melody-ids.csv')
+    last_line = subprocess.check_output(['tail', '-1', filename])
+    config.num_records = int(last_line.split(',')[0]) + 1
     tf.logging.info('Counted %d records', config.num_records)
 
   mode = 'eval' if FLAGS.eval else 'train'
