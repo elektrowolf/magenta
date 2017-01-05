@@ -77,7 +77,7 @@ def main(unused_argv):
   if FLAGS.learn_initial_state:
     # Count records for embedding
     id_file = os.path.join(run_dir, 'melody-ids.csv')
-    last_line = subprocess.check_output(['tail', '-1', filename])
+    last_line = subprocess.check_output(['tail', '-1', id_file])
     config.num_records = int(last_line.split(',')[0]) + 1
     tf.logging.info('Counted %d records', config.num_records)
 
