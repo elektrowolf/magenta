@@ -38,6 +38,8 @@ tf.app.flags.DEFINE_string('sequence_example_file', '',
                            'tf.SequenceExample records for training or '
                            'evaluation. A filepattern may also be provided, '
                            'which will be expanded to all matching files.')
+tf.app.flags.DEFINE_string('id_file', '',
+                           'Path to CSV file containing melody ids')
 tf.app.flags.DEFINE_integer('num_training_steps', 0,
                             'The the number of global training steps your '
                             'model should take before exiting training. '
@@ -75,8 +77,12 @@ def main(unused_argv):
   config = melody_rnn_config_flags.config_from_flags()
 
   if FLAGS.learn_initial_state:
+    if not FLAGS.id_file:
+      tf.logging.fatal('--id_file required')
+      return
+
     # Count records for embedding
-    id_file = os.path.join(run_dir, 'melody-ids.csv')
+    id_file = os.path.expanduser(FLAGS.id_file)
     last_line = subprocess.check_output(['tail', '-1', id_file])
     config.num_records = int(last_line.split(',')[0]) + 1
     tf.logging.info('Counted %d records', config.num_records)
