@@ -79,13 +79,13 @@ def run_training(graph, train_dir, num_training_steps=None,
 
       # Load Adam state
       sess.run([assign_m, assign_v], {
-        m: embedding_m[ids],
-        v: embedding_v[ids] 
+        m: embedding_m[ids_],
+        v: embedding_v[ids_] 
       })
 
       # Load embedding
       sess.run(tf.variables_initializer([initial_state]), {
-        initial_state_in: embedding[ids]
+        initial_state_in: embedding[ids_]
       })
 
       if sv.should_stop():
@@ -107,7 +107,7 @@ def run_training(graph, train_dir, num_training_steps=None,
         global_step_, _ = sess.run([global_step, train_op])
 
       # Store embedding and Adam state
-      embedding[ids], embedding_m[ids], embedding_v[ids] = sess.run([ initial_state, m, v])
+      embedding[ids_], embedding_m[ids_], embedding_v[ids_] = sess.run([ initial_state, m, v])
 
     sv.saver.save(sess, sv.save_path, global_step=sv.global_step)
     tf.logging.info('Training complete.')
