@@ -51,6 +51,8 @@ def run_training(graph, train_dir, num_training_steps=None,
   v = graph.get_collection('v')[0]
   assign_m = graph.get_collection('assign_m')[0]
   assign_v = graph.get_collection('assign_v')[0]
+  read_m = graph.get_collection('read_m')[0]
+  read_v = graph.get_collection('read_v')[0]
   ids = graph.get_collection('ids')[0]
   init_op = graph.get_collection('init_op')[0]
 
@@ -110,7 +112,7 @@ def run_training(graph, train_dir, num_training_steps=None,
         global_step_, _ = sess.run([global_step, train_op])
 
       # Store embedding and Adam state
-      embedding[ids_], embedding_m[ids_], embedding_v[ids_] = sess.run([ initial_state, m, v])
+      embedding[ids_], embedding_m[ids_], embedding_v[ids_] = sess.run([ initial_state, read_m, read_v])
 
     sv.saver.save(sess, sv.save_path, global_step=sv.global_step)
     tf.logging.info('Training complete.')
