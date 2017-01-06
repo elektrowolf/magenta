@@ -106,7 +106,7 @@ def main(unused_argv):
 
   else:
     events_rnn_train.run_training(graph, train_dir, FLAGS.num_training_steps,
-                                  FLAGS.summary_frequency)
+                                  FLAGS.summary_frequency, num_records=config.num_records)
 
 
 def console_entry_point():
