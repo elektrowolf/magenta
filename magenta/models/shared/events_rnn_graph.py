@@ -189,8 +189,8 @@ def build_graph(mode, config, sequence_example_file_paths=None):
 
         m = tf.placeholder(tf.float32)
         v = tf.placeholder(tf.float32)
-        assign_m = opt.get_slot(x, 'm').assign(m)
-        assign_v = opt.get_slot(x, 'v').assign(v)
+        assign_m = opt.get_slot(initial_state, 'm').assign(m)
+        assign_v = opt.get_slot(initial_state, 'v').assign(v)
 
         tf.add_to_collection('m', m)
         tf.add_to_collection('v', v)
