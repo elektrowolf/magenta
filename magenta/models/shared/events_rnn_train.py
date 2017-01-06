@@ -52,13 +52,16 @@ def run_training(graph, train_dir, num_training_steps=None,
   assign_v = graph.get_collection('assign_v')[0]
   ids = graph.get_collection('ids')[0]
 
+
+
   embedding_shape = tuple([num_records] + initial_state_size)
   embedding = np.zeros(embedding_shape)
   embedding_m = np.zeros(embedding_shape)
   embedding_v = np.zeros(embedding_shape)
 
+  init_op = tf.global_variables_initializer(), {initial_state_in:np.zeros(initial_state_size)}
   sv = tf.train.Supervisor(graph=graph, logdir=train_dir, save_model_secs=30,
-                           global_step=global_step)
+                           global_step=global_step, init_op=init_op)
 
   with sv.managed_session() as sess:
     global_step_ = sess.run(global_step)
