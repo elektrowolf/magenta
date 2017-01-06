@@ -55,7 +55,7 @@ def run_training(graph, train_dir, num_training_steps=None,
 
 
 
-  embedding_shape = tuple([num_records] + initial_state_size)
+  embedding_shape = tuple([num_records] + initial_state_size.as_list()[1:])
   embedding = np.zeros(embedding_shape)
   embedding_m = np.zeros(embedding_shape)
   embedding_v = np.zeros(embedding_shape)
