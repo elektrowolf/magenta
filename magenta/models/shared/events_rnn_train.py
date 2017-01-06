@@ -45,6 +45,7 @@ def run_training(graph, train_dir, num_training_steps=None,
   # TODO: cond
   initial_state_size = graph.get_collection('initial_state_size')[0]
   initial_state_in = graph.get_collection('initial_state_in')[0]
+  initial_state_init = graph.get_collection('initial_state_init')[0]
   initial_state = graph.get_collection('initial_state')[0]
   m = graph.get_collection('m')[0]
   v = graph.get_collection('v')[0]
@@ -84,7 +85,7 @@ def run_training(graph, train_dir, num_training_steps=None,
       })
 
       # Load embedding
-      sess.run(tf.variables_initializer([initial_state]), {
+      sess.run(initial_state_init, {
         initial_state_in: embedding[ids_]
       })
 
