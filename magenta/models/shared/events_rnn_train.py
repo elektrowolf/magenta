@@ -17,6 +17,7 @@ import time
 
 # internal imports
 import tensorflow as tf
+import numpy as np
 
 
 def run_training(graph, train_dir, num_training_steps=None,
