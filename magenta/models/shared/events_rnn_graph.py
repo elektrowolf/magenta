@@ -117,7 +117,7 @@ def build_graph(mode, config, sequence_example_file_paths=None):
       initial_state_size = cell.zero_state(hparams.batch_size, tf.float32).get_shape()
       initial_state_in = tf.placeholder(tf.float32, shape=initial_state_size)
       initial_state = tf.Variable(initial_state_in, tf.float32)
-      tf.add_to_collection('initial_state_size', initial_state_size)
+      tf.add_to_collection('initial_state_size', initial_state_size.as_list())
       tf.add_to_collection('initial_state_in', initial_state_in)
       tf.add_to_collection('initial_state', initial_state)
 
