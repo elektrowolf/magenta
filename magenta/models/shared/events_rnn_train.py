@@ -61,9 +61,11 @@ def run_training(graph, train_dir, num_training_steps=None,
   embedding_m = np.zeros(embedding_shape)
   embedding_v = np.zeros(embedding_shape)
 
+  dummy = np.zeros(initial_state_size)
+
   sv = tf.train.Supervisor(graph=graph, logdir=train_dir, save_model_secs=30,
                            global_step=global_step, init_op=init_op, 
-                           init_feed_dict={initial_state_in:np.zeros(initial_state_size)})
+                           init_feed_dict={initial_state_in: dummy, m: dummy, v: dummy})
 
   with sv.managed_session() as sess:
     global_step_ = sess.run(global_step)
