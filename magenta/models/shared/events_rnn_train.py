@@ -21,7 +21,7 @@ import numpy as np
 
 
 def run_training(graph, train_dir, num_training_steps=None,
-                 summary_frequency=10, should_stop_func=None, num_records=0):
+                 summary_frequency=10, should_stop_func=None, num_records=0, embedding_file=None):
   """Runs the training loop.
 
   Args:
@@ -57,11 +57,10 @@ def run_training(graph, train_dir, num_training_steps=None,
   init_op = graph.get_collection('init_op')[0]
 
 
-
   embedding_shape = tuple([num_records] + initial_state_size[1:])
-  embedding = np.zeros(embedding_shape)
-  embedding_m = np.zeros(embedding_shape)
-  embedding_v = np.zeros(embedding_shape)
+  embedding = np.memmap(embedding_file + '.npy', dtype='float32', mode='w+', shape=embedding_shape)
+  embedding_m = np.memmap(embedding_file + '.m.npy', dtype='float32', mode='w+', shape=embedding_shape)
+  embedding_v = np.memmap(embedding_file + '.v.npy', dtype='float32', mode='w+', shape=embedding_shape)
 
   dummy = np.zeros(initial_state_size)
 
@@ -81,7 +80,6 @@ def run_training(graph, train_dir, num_training_steps=None,
     while not num_training_steps or global_step_ < num_training_steps:
       # Current batch ids
       ids_ = sess.run(ids)
-      print(ids_)
 
       # Load Adam state
       sess.run([assign_m, assign_v], {
@@ -102,6 +100,9 @@ def run_training(graph, train_dir, num_training_steps=None,
         (global_step_, learning_rate_, loss_, perplexity_, accuracy_,
          _) = sess.run([global_step, learning_rate, loss, perplexity, accuracy,
                         train_op])
+        embedding.flush()
+        embedding_m.flush()
+        embedding_v.flush()
         tf.logging.info('Global Step: %d - '
                         'Learning Rate: %.5f - '
                         'Loss: %.3f - '

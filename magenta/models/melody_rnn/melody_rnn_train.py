@@ -96,6 +96,8 @@ def main(unused_argv):
     tf.gfile.MakeDirs(train_dir)
   tf.logging.info('Train dir: %s', train_dir)
 
+  embedding_file = os.path.join(train_dir, 'embedding')
+
   if FLAGS.eval:
     eval_dir = os.path.join(run_dir, 'eval')
     if not os.path.exists(eval_dir):
@@ -106,7 +108,7 @@ def main(unused_argv):
 
   else:
     events_rnn_train.run_training(graph, train_dir, FLAGS.num_training_steps,
-                                  FLAGS.summary_frequency, num_records=config.num_records)
+                                  FLAGS.summary_frequency, num_records=config.num_records, embedding_file=embedding_file)
 
 
 def console_entry_point():
