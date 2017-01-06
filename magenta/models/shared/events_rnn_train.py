@@ -81,6 +81,7 @@ def run_training(graph, train_dir, num_training_steps=None,
     while not num_training_steps or global_step_ < num_training_steps:
       # Current batch ids
       ids_ = sess.run(ids)
+      print(ids_)
 
       # Load Adam state
       sess.run([assign_m, assign_v], {
