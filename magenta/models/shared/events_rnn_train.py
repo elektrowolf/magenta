@@ -105,9 +105,10 @@ def run_training(graph, train_dir, num_training_steps=None,
                         'Learning Rate: %.5f - '
                         'Loss: %.3f - '
                         'Perplexity: %.3f - '
-                        'Accuracy: %.3f',
+                        'Accuracy: %.3f - '
+                        'Last ID: %d',
                         global_step_, learning_rate_, loss_, perplexity_,
-                        accuracy_)
+                        accuracy_, ids_[-1])
       else:
         global_step_, _ = sess.run([global_step, train_op])
 
