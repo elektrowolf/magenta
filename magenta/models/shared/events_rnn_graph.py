@@ -90,6 +90,7 @@ def build_graph(mode, config, sequence_example_file_paths=None):
     if mode == 'train' or mode == 'eval':
       inputs, labels, lengths, ids = magenta.common.get_padded_batch(
           sequence_example_file_paths, hparams.batch_size, input_size)
+      tf.add_to_collection('ids', ids)
 
     elif mode == 'generate':
       initial_state = tf.nn.rnn_cell.LSTMStateTuple(c_state, h_state)
@@ -113,10 +114,12 @@ def build_graph(mode, config, sequence_example_file_paths=None):
     if not config.learn_initial_state:
       initial_state = cell.zero_state(hparams.batch_size, tf.float32)
     else:
-      embedding_shape = cell.zero_state(config.num_records, tf.float32).get_shape()
-      embedding = tf.Variable(tf.zeros(embedding_shape), tf.float32, name='embedding')
-      tf.add_to_collection('embedding', embedding)
-      initial_state = tf.nn.embedding_lookup(embedding, ids)
+      initial_state_size = cell.zero_state(hparams.batch_size, tf.float32).get_shape()
+      initial_state_in = tf.placeholder(tf.float32, shape=initial_state_size)
+      initial_state = tf.Variable(initial_state_in, tf.float32)
+      tf.add_to_collection('initial_state_size', initial_state_size.as_list()[1:])
+      tf.add_to_collection('initial_state_in', initial_state_in)
+      tf.add_to_collection('initial_state', initial_state)
 
     outputs, final_state = tf.nn.dynamic_rnn(
         cell, inputs, lengths, initial_state, parallel_iterations=1,
@@ -183,6 +186,17 @@ def build_graph(mode, config, sequence_example_file_paths=None):
                                        global_step)
         tf.add_to_collection('learning_rate', learning_rate)
         tf.add_to_collection('train_op', train_op)
+
+        m = tf.placeholder(tf.float32)
+        v = tf.placeholder(tf.float32)
+        assign_m = opt.get_slot(x, 'm').assign(m)
+        assign_v = opt.get_slot(x, 'v').assign(v)
+
+        tf.add_to_collection('m', m)
+        tf.add_to_collection('v', v)
+        tf.add_to_collection('assign_m', assign_m)
+        tf.add_to_collection('assign_v', assign_v)
+
 
         summaries.append(tf.summary.scalar(
             'learning_rate', learning_rate))

@@ -20,7 +20,7 @@ import tensorflow as tf
 
 
 def run_training(graph, train_dir, num_training_steps=None,
-                 summary_frequency=10, should_stop_func=None):
+                 summary_frequency=10, should_stop_func=None, num_records=0):
   """Runs the training loop.
 
   Args:
@@ -41,6 +41,21 @@ def run_training(graph, train_dir, num_training_steps=None,
   accuracy = graph.get_collection('accuracy')[0]
   train_op = graph.get_collection('train_op')[0]
 
+  # TODO: cond
+  initial_state_size = graph.get_collection('initial_state_size')[0]
+  initial_state_in = graph.get_collection('initial_state_in')[0]
+  initial_state = graph.get_collection('initial_state')[0]
+  m = graph.get_collection('m')[0]
+  v = graph.get_collection('v')[0]
+  assign_m = graph.get_collection('assign_m')[0]
+  assign_v = graph.get_collection('assign_v')[0]
+  ids = graph.get_collection('ids')[0]
+
+  embedding_shape = tuple([num_records] + initial_state_size)
+  embedding = np.zeros(embedding_shape)
+  embedding_m = np.zeros(embedding_shape)
+  embedding_v = np.zeros(embedding_shape)
+
   sv = tf.train.Supervisor(graph=graph, logdir=train_dir, save_model_secs=30,
                            global_step=global_step)
 
@@ -54,6 +69,20 @@ def run_training(graph, train_dir, num_training_steps=None,
       return
     tf.logging.info('Starting training loop...')
     while not num_training_steps or global_step_ < num_training_steps:
+      # Current batch ids
+      ids_ = sess.run(ids)
+
+      # Load Adam state
+      sess.run([assign_m, assign_v], {
+        m: embedding_m[ids],
+        v: embedding_v[ids] 
+      })
+
+      # Load embedding
+      sess.run(tf.variables_initializer([initial_state]), {
+        initial_state_in: embedding[ids]
+      })
+
       if sv.should_stop():
         break
       if should_stop_func and should_stop_func():
@@ -71,6 +100,10 @@ def run_training(graph, train_dir, num_training_steps=None,
                         accuracy_)
       else:
         global_step_, _ = sess.run([global_step, train_op])
+
+      # Store embedding and Adam state
+      embedding[ids], embedding_m[ids], embedding_v[ids] = sess.run([ initial_state, m, v])
+
     sv.saver.save(sess, sv.save_path, global_step=sv.global_step)
     tf.logging.info('Training complete.')
 
