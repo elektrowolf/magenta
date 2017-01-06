@@ -121,6 +121,9 @@ def build_graph(mode, config, sequence_example_file_paths=None):
       tf.add_to_collection('initial_state_in', initial_state_in)
       tf.add_to_collection('initial_state', initial_state)
 
+      init_op = tf.global_variables_initializer()
+      tf.add_to_collection('init_op', init_op)
+
     outputs, final_state = tf.nn.dynamic_rnn(
         cell, inputs, lengths, initial_state, parallel_iterations=1,
         swap_memory=True)
