@@ -98,6 +98,17 @@ tf.app.flags.DEFINE_string(
     'log', 'INFO',
     'The threshold for what messages will be logged DEBUG, INFO, WARN, ERROR, '
     'or FATAL.')
+tf.app.flags.DEFINE_integer(
+    'record_a', None,
+    'Record A for initial state.')
+tf.app.flags.DEFINE_integer(
+    'record_b', None,
+    'Record B for initial state.')
+tf.app.flags.DEFINE_string(
+    'id_file', None,
+    'melody-ids.csv')
+
+
 
 
 def get_checkpoint():
@@ -218,12 +229,30 @@ def run_with_flags(generator):
   tf.logging.debug('input_sequence: %s', input_sequence)
   tf.logging.debug('generator_options: %s', generator_options)
 
+  # Prepare initial state
+  initial_state = None
+  if FLAGS.record_a is not None:
+    id_file = os.path.expanduser(FLAGS.id_file)
+    last_line = subprocess.check_output(['tail', '-1', id_file])
+    num_records = int(last_line.split(',')[0]) + 1
+    print '%d records in total' % num_records
+
+    embedding_file = os.path.join(os.path.join(os.path.expanduser(FLAGS.run_dir), 'train'), 'embedding.npy')
+    embedding = np.memmap(embedding_file, dtype='float32', mode='r')
+    assert(embedding.shape[0] % num_records == 0)
+    embedding.shape = (num_records, embedding.shape[0] / num_records)
+
+    initial_state = embedding[FLAGS.record_a, :]
+    if FLAGS.record_b is not None:
+      initial_state += embedding[FLAGS.record_b, :]
+      initial_state /= 2.
+
   # Make the generate request num_outputs times and save the output as midi
   # files.
   date_and_time = time.strftime('%Y-%m-%d_%H%M%S')
   digits = len(str(FLAGS.num_outputs))
   for i in range(FLAGS.num_outputs):
-    generated_sequence = generator.generate(input_sequence, generator_options)
+    generated_sequence = generator.generate(input_sequence, generator_options, initial_state=initial_state)
 
     midi_filename = '%s_%s.mid' % (date_and_time, str(i + 1).zfill(digits))
     midi_path = os.path.join(FLAGS.output_dir, midi_filename)

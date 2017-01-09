@@ -41,7 +41,7 @@ class MelodyRnnSequenceGenerator(mm.BaseSequenceGenerator):
     super(MelodyRnnSequenceGenerator, self).__init__(
         model, details, steps_per_quarter, checkpoint, bundle)
 
-  def _generate(self, input_sequence, generator_options):
+  def _generate(self, input_sequence, generator_options, initial_state=None):
     if len(generator_options.input_sections) > 1:
       raise mm.SequenceGeneratorException(
           'This model supports at most one input_sections message, but got %s' %
@@ -111,7 +111,7 @@ class MelodyRnnSequenceGenerator(mm.BaseSequenceGenerator):
                 if name in generator_options.args)
 
     generated_melody = self._model.generate_melody(
-        end_step - melody.start_step, melody, **args)
+        end_step - melody.start_step, melody, initial_state=initial_state, **args)
     generated_sequence = generated_melody.to_sequence(qpm=qpm)
     assert (generated_sequence.total_time - generate_section.end_time) <= 1e-5
     return generated_sequence

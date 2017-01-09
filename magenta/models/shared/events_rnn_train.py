@@ -118,6 +118,7 @@ def run_training(graph, train_dir, num_training_steps=None,
       embedding[ids_], embedding_m[ids_], embedding_v[ids_] = sess.run([ initial_state, read_m, read_v])
 
     sv.saver.save(sess, sv.save_path, global_step=sv.global_step)
+    embedding.flush()
     tf.logging.info('Training complete.')
 
 

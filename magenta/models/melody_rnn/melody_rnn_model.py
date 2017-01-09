@@ -30,7 +30,7 @@ class MelodyRnnModel(events_rnn_model.EventSequenceRnnModel):
   """Class for RNN melody generation models."""
 
   def generate_melody(self, num_steps, primer_melody, temperature=1.0,
-                      beam_size=1, branch_factor=1, steps_per_iteration=1):
+                      beam_size=1, branch_factor=1, steps_per_iteration=1, initial_state=None):
     """Generate a melody from a primer melody.
 
     Args:
@@ -58,7 +58,7 @@ class MelodyRnnModel(events_rnn_model.EventSequenceRnnModel):
         self._config.transpose_to_key)
 
     melody = self._generate_events(num_steps, melody, temperature, beam_size,
-                                   branch_factor, steps_per_iteration)
+                                   branch_factor, steps_per_iteration, initial_state)
 
     melody.transpose(-transpose_amount)
 

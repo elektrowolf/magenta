@@ -231,7 +231,7 @@ class EventSequenceRnnModel(mm.BaseModel):
 
   def _beam_search(self, events, num_steps, temperature, beam_size,
                    branch_factor, steps_per_iteration, control_events=None,
-                   modify_events_callback=None):
+                   modify_events_callback=None, initial_state=None):
     """Generates an event sequence using beam search.
 
     Initially, the beam is filled with `beam_size` copies of the initial event
@@ -279,6 +279,7 @@ class EventSequenceRnnModel(mm.BaseModel):
       The highest-likelihood event sequence as computed by the beam search.
     """
     event_sequences = [copy.deepcopy(events) for _ in range(beam_size)]
+
     graph_initial_state = self._session.graph.get_collection('initial_state')[0]
     loglik = np.zeros(beam_size)
 
@@ -298,8 +299,12 @@ class EventSequenceRnnModel(mm.BaseModel):
       modify_events_callback(
           self._config.encoder_decoder, event_sequences, inputs)
 
-    initial_state = np.tile(
+    if initial_state is None:
+      initial_state = np.tile(
         self._session.run(graph_initial_state), (beam_size, 1))
+    else:
+      initial_state = np.tile(initial_state, (beam_size, 1))
+      
     event_sequences, final_state, loglik = self._generate_branches(
         event_sequences, loglik, branch_factor, first_iteration_num_steps,
         inputs, initial_state, temperature)
@@ -336,7 +341,7 @@ class EventSequenceRnnModel(mm.BaseModel):
 
   def _generate_events(self, num_steps, primer_events, temperature=1.0,
                        beam_size=1, branch_factor=1, steps_per_iteration=1,
-                       control_events=None, modify_events_callback=None):
+                       control_events=None, modify_events_callback=None, initial_state=None):
     """Generate an event sequence from a primer sequence.
 
     Args:
@@ -389,7 +394,7 @@ class EventSequenceRnnModel(mm.BaseModel):
     if num_steps > len(primer_events):
       events = self._beam_search(events, num_steps - len(events), temperature,
                                  beam_size, branch_factor, steps_per_iteration,
-                                 control_events, modify_events_callback)
+                                 control_events, modify_events_callback, initial_state)
     return events
 
   def _evaluate_batch_log_likelihood(self, event_sequences, inputs,

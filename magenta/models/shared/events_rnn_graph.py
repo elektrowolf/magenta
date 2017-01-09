@@ -93,7 +93,6 @@ def build_graph(mode, config, sequence_example_file_paths=None):
       tf.add_to_collection('ids', ids)
 
     elif mode == 'generate':
-      initial_state = tf.nn.rnn_cell.LSTMStateTuple(c_state, h_state)
       inputs = tf.placeholder(tf.float32, [hparams.batch_size, None,
                                            input_size])
       # If state_is_tuple is True, the output RNN cell state will be a tuple
@@ -111,8 +110,10 @@ def build_graph(mode, config, sequence_example_file_paths=None):
                          attn_length=hparams.attn_length,
                          state_is_tuple=state_is_tuple)
 
-    if not config.learn_initial_state:
+    # Old: use zero
+    if not config.learn_initial_state or mode == 'generate':
       initial_state = cell.zero_state(hparams.batch_size, tf.float32)
+    # Learn initial state, complex variable/placeholder construction
     else:
       initial_state_size = cell.zero_state(hparams.batch_size, tf.float32).get_shape()
       initial_state_in = tf.placeholder(tf.float32, shape=initial_state_size)
