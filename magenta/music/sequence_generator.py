@@ -187,7 +187,7 @@ class BaseSequenceGenerator(object):
     """When used as a context manager, closes the TF session."""
     self.close()
 
-  def generate(self, input_sequence, generator_options):
+  def generate(self, input_sequence, generator_options, initial_state=None):
     """Generates a sequence from the model based on sequence and options.
 
     Also initializes the TF graph if not yet initialized.
@@ -201,7 +201,7 @@ class BaseSequenceGenerator(object):
       The generated NoteSequence proto.
     """
     self.initialize()
-    return self._generate(input_sequence, generator_options)
+    return self._generate(input_sequence, generator_options, initial_state=initial_state)
 
   def create_bundle_file(self, bundle_file, bundle_description=None):
     """Writes a generator_pb2.GeneratorBundle file in the specified location.
