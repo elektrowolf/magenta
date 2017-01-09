@@ -34,9 +34,6 @@ def main(unused_argv):
   config = melody_rnn_config_flags.config_from_flags()
 
   labels = find_record(needed_id, config, sequence_example_file_paths)
-  if labels != False:
-    tf.logging.error("Could not find record")
-    exit()
 
   seq = music_pb2.NoteSequence()
   seq.tempos.add().qpm = FLAGS.qpm
