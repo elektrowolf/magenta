@@ -1,6 +1,7 @@
 import tensorflow as tf
 import os
 from magenta.models.melody_rnn import melody_rnn_config_flags
+import magenta
 
 
 FLAGS = tf.app.flags.FLAGS
