@@ -34,7 +34,10 @@ def main(unused_argv):
   config = melody_rnn_config_flags.config_from_flags()
 
   labels = find_record(needed_id, config, sequence_example_file_paths)
-  
+  if not labels:
+    tf.logging.error("Could not find record")
+    exit()
+
   seq = music_pb2.NoteSequence()
   seq.tempos.add().qpm = FLAGS.qpm
   config.encoder_decoder.decode_labels(seq, labels) 
@@ -53,9 +56,10 @@ def find_record(needed_id, config, sequence_example_file_paths):
       last_id = -1
       while True:
         labels_, id_ = sess.run([labels, id])
-        tf.logging.warn('Saw record %d' % id_)
+        tf.logging.warn('Saw record %d, looking for %d' % (id_, needed_id))
 
         if needed_id == id_[0]:
+          print(labels_)
           return labels_[0]
         elif needed_id < id_[0]:
           tf.logging.warn('Could not find record %d', needed_ids[0])
