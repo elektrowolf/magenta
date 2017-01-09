@@ -11,8 +11,8 @@ tf.app.flags.DEFINE_string('sequence_example_file', '',
                            'tf.SequenceExample records for training or '
                            'evaluation. A filepattern may also be provided, '
                            'which will be expanded to all matching files.')
-tf.app.flags.DEFINE_integer('record_id', '',
-                           'Record id number')
+tf.app.flags.DEFINE_integer('record_ids', '',
+                           'Record id numbers, separated by comma')
 tf.app.flags.DEFINE_float(
     'qpm', 120,
     'The quarters per minute to play generated output at. If a primer MIDI is '
@@ -28,20 +28,23 @@ def main(unused_argv):
     tf.logging.fatal('--record_id required')
     return
 
-  needed_id = int(FLAGS.record_id)
+  needed_ids = [ int(rid.strip()) for rid in flags.record_ids.split(',') ]
   sequence_example_file_paths = tf.gfile.Glob(
     os.path.expanduser(FLAGS.sequence_example_file))
   config = melody_rnn_config_flags.config_from_flags()
 
-  labels = find_record(needed_id, config, sequence_example_file_paths)
+  records = find_records(needed_ids, config, sequence_example_file_paths)
 
-  melody = magenta.music.Melody(events=labels, steps_per_quarter=4)
-  config.encoder_decoder.decode_labels(melody, labels) 
+  for id, labels in records.items():
+    melody = magenta.music.Melody(events=labels, steps_per_quarter=4)
+    config.encoder_decoder.decode_labels(melody, labels) 
 
-  seq = melody.to_sequence(qpm=FLAGS.qpm)
-  magenta.music.sequence_proto_to_midi_file(seq, 'record-%d.mid' % needed_id)
+    seq = melody.to_sequence(qpm=FLAGS.qpm)
+    magenta.music.sequence_proto_to_midi_file(seq, 'record-%d.mid' % id)
 
-def find_record(needed_id, config, sequence_example_file_paths):
+def find_records(needed_ids, config, sequence_example_file_paths):
+  result = {}
+
   with tf.Graph().as_default() as g:
     with tf.Session() as sess:
       _, labels, _, id = magenta.common.get_padded_batch(
@@ -50,23 +53,22 @@ def find_record(needed_id, config, sequence_example_file_paths):
       coord = tf.train.Coordinator()
       threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-      last_id = -1
+      first_id = -1
       while True:
         labels_, id_ = sess.run([labels, id])
-        #tf.logging.warn('Saw record %d, looking for %d' % (id_[0], needed_id))
 
-        if needed_id == id_[0]:
-          print(labels_)
-          return labels_[0]
-        # elif needed_id < id_[0]:
-        #   tf.logging.warn('Could not find record %d, hit %d', needed_id, id_[0])
-        #   return False
+        if first_id == -1:
+          first_id = id_[0]
+        elif first_id == id_[0]:
+          tf.logging.warn('Hit end, could not locate records %s' % needed_ids.join(', '))
+          return result
 
-        # if id_[0] < last_id:
-        #   #tf.logging.warn('Could not find record %d, hit %d', needed_id, id_[0])
-        #   return False
-        # else:
-        #   last_id = id_[0]
+        if id_[0] in needed_ids:
+          result[id_[0]] = labels_[0]
+          del needed_ids[id_[0]]
+
+          if len(needed_ids) == 0:
+            return result
 
 def console_entry_point():
   tf.app.run(main)
