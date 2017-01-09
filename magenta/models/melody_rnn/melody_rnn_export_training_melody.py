@@ -28,7 +28,7 @@ def main(unused_argv):
     tf.logging.fatal('--record_id required')
     return
 
-  needed_id = FLAGS.record_id
+  needed_id = int(FLAGS.record_id)
   sequence_example_file_paths = tf.gfile.Glob(
     os.path.expanduser(FLAGS.sequence_example_file))
   config = melody_rnn_config_flags.config_from_flags()
