@@ -2,6 +2,7 @@ import tensorflow as tf
 import os
 from magenta.models.melody_rnn import melody_rnn_config_flags
 import magenta
+from magenta.protobuf import music_pb2
 
 
 FLAGS = tf.app.flags.FLAGS
