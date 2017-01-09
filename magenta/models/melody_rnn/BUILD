@@ -116,3 +116,17 @@ py_binary(
         # tensorflow dep
     ],
 )
+
+py_binary(
+    name = "melody_rnn_export_training_melody",
+    srcs = ["melody_rnn_export_training_melody.py"],
+    srcs_version = "PY2AND3",
+    visibility = [
+        "//magenta/tools/pip:__subpackages__",
+    ],
+    deps = [
+        ":melody_rnn_config_flags",
+        "//magenta",
+        # tensorflow dep
+    ],
+)
