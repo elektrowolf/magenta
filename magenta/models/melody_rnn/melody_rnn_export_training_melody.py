@@ -34,7 +34,7 @@ def main(unused_argv):
   config = melody_rnn_config_flags.config_from_flags()
 
   labels = find_record(needed_id, config, sequence_example_file_paths)
-  if not labels:
+  if labels != False:
     tf.logging.error("Could not find record")
     exit()
 
@@ -56,7 +56,7 @@ def find_record(needed_id, config, sequence_example_file_paths):
       last_id = -1
       while True:
         labels_, id_ = sess.run([labels, id])
-        tf.logging.warn('Saw record %d, looking for %d' % (id_[0], needed_id))
+        #tf.logging.warn('Saw record %d, looking for %d' % (id_[0], needed_id))
 
         if needed_id == id_[0]:
           print(labels_)
