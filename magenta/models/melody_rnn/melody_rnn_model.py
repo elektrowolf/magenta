@@ -58,7 +58,7 @@ class MelodyRnnModel(events_rnn_model.EventSequenceRnnModel):
         self._config.transpose_to_key)
 
     melody = self._generate_events(num_steps, melody, temperature, beam_size,
-                                   branch_factor, steps_per_iteration, initial_state)
+                                   branch_factor, steps_per_iteration, initial_state=initial_state)
 
     melody.transpose(-transpose_amount)
 
