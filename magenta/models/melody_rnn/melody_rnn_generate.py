@@ -188,7 +188,7 @@ def run_with_flags(generator):
   else:
     tf.logging.warning(
         'No priming sequence specified. Defaulting to MELODY_START.')
-    primer_melody = magenta.music.Melody([MELODY_START])
+    primer_melody = magenta.music.Melody([constants.MELODY_START])
     primer_sequence = primer_melody.to_sequence(qpm=qpm)
 
   # Derive the total number of seconds to generate based on the QPM of the
