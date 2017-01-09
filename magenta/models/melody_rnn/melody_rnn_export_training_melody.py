@@ -65,7 +65,7 @@ def find_records(needed_ids, config, sequence_example_file_paths):
 
         if id_[0] in needed_ids:
           result[id_[0]] = labels_[0]
-          del needed_ids[id_[0]]
+          needed_ids.remove(id_[0])
 
           if len(needed_ids) == 0:
             return result
