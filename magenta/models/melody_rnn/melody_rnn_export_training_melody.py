@@ -56,16 +56,17 @@ def find_record(needed_id, config, sequence_example_file_paths):
       last_id = -1
       while True:
         labels_, id_ = sess.run([labels, id])
-        tf.logging.warn('Saw record %d, looking for %d' % (id_, needed_id))
+        tf.logging.warn('Saw record %d, looking for %d' % (id_[0], needed_id))
 
         if needed_id == id_[0]:
           print(labels_)
           return labels_[0]
         elif needed_id < id_[0]:
-          tf.logging.warn('Could not find record %d', needed_ids[0])
+          tf.logging.warn('Could not find record %d, hit %d', needed_id, id_[0])
           return False
 
         if id_[0] < last_id:
+          tf.logging.warn('Could not find record %d, hit %d', needed_id, id_[0])
           return False
         else:
           last_id = id_[0]
