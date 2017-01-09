@@ -22,6 +22,7 @@ import time
 import tensorflow as tf
 import magenta
 import subprocess
+import numpy as np
 
 from magenta.models.melody_rnn import melody_rnn_config_flags
 from magenta.models.melody_rnn import melody_rnn_model
