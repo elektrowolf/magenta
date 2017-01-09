@@ -48,7 +48,7 @@ def find_record(needed_id, config, sequence_example_file_paths):
 
       last_id = -1
       while True:
-        labels_, id_ = sess.run(labels, id)
+        labels_, id_ = sess.run([labels, id])
 
         if needed_id == id_[0]:
           return labels_[0]
