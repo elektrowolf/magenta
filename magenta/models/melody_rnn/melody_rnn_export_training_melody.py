@@ -46,6 +46,9 @@ def find_record(needed_id, config, sequence_example_file_paths):
       _, labels, _, id = magenta.common.get_padded_batch(
         sequence_example_file_paths, 1, config.encoder_decoder.input_size)
 
+      coord = tf.train.Coordinator()
+      threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
       last_id = -1
       while True:
         labels_, id_ = sess.run([labels, id])
