@@ -11,7 +11,7 @@ tf.app.flags.DEFINE_string('sequence_example_file', '',
                            'tf.SequenceExample records for training or '
                            'evaluation. A filepattern may also be provided, '
                            'which will be expanded to all matching files.')
-tf.app.flags.DEFINE_integer('record_ids', '',
+tf.app.flags.DEFINE_string('record_ids', '',
                            'Record id numbers, separated by comma')
 tf.app.flags.DEFINE_float(
     'qpm', 120,
