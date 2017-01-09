@@ -223,6 +223,11 @@ class EventSequenceEncoderDecoder(object):
       labels.append(self.events_to_label(events, i + 1))
     return sequence_example_lib.make_sequence_example(inputs, labels, events.id)
 
+  def decode_labels(self, event_sequence, labels):
+    for i in range(len(labels) - 1):
+      event = self.class_index_to_event(labels[i], event_sequence)
+      event_sequence.append(event)
+
   def get_inputs_batch(self, event_sequences, full_length=False):
     """Returns an inputs batch for the given event sequences.
 
