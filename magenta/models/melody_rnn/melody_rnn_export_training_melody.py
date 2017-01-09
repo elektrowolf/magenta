@@ -59,3 +59,9 @@ def find_record(needed_id, config, sequence_example_file_paths):
           return False
         else:
           last_id = id_[0]
+
+def console_entry_point():
+  tf.app.run(main)
+
+if __name__ == '__main__':
+  console_entry_point()
