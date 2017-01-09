@@ -24,8 +24,8 @@ def main(unused_argv):
     tf.logging.fatal('--sequence_example_file required')
     return
 
-  if not FLAGS.record_id:
-    tf.logging.fatal('--record_id required')
+  if not FLAGS.record_ids:
+    tf.logging.fatal('--record_ids required')
     return
 
   needed_ids = [ int(rid.strip()) for rid in flags.record_ids.split(',') ]
