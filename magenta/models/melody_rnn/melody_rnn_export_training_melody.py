@@ -35,7 +35,10 @@ def main(unused_argv):
 
   labels = find_record(needed_id, config, sequence_example_file_paths)
 
-  seq = magenta.music.Melody(events=labels, steps_per_quarter=FLAGS.qpm)
+  melody = magenta.music.Melody(events=labels, steps_per_quarter=FLAGS.qpm)
+  config.encoder_decoder.decode_labels(melody, labels) 
+
+  seq = melody.to_sequence(qpm=FLAGS.qpm)
   magenta.music.sequence_proto_to_midi_file(seq, 'record-%d.mid' % needed_id)
 
 def find_record(needed_id, config, sequence_example_file_paths):
