@@ -59,6 +59,3 @@ def find_record(needed_id, config, sequence_example_file_paths):
           return False
         else:
           last_id = id_[0]
-
-indices = self._config.encoder_decoder.extend_event_sequences(
-    event_sequences, softmax)
