@@ -63,7 +63,8 @@ def find_records(needed_ids, config, sequence_example_file_paths):
           tf.logging.warn('Hit end, could not locate records %s' % needed_ids.join(', '))
           return result
 
-        if id_[0] in needed_ids:
+        if int(id_[0]) in needed_ids:
+          tf.logging.info('Found %d' % id_[0])
           result[id_[0]] = labels_[0]
           needed_ids.remove(id_[0])
 
