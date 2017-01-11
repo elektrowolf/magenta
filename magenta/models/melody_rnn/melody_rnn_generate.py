@@ -244,7 +244,7 @@ def run_with_flags(generator):
     assert(embedding.shape[0] % num_records == 0)
     embedding.shape = (num_records, embedding.shape[0] / num_records)
 
-    initial_state = embedding[FLAGS.record_a, :]
+    initial_state = np.copy(embedding[FLAGS.record_a, :])
     if FLAGS.record_b is not None:
       initial_state += embedding[FLAGS.record_b, :]
       initial_state /= 2.

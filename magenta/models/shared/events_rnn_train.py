@@ -58,9 +58,9 @@ def run_training(graph, train_dir, num_training_steps=None,
 
 
   embedding_shape = tuple([num_records] + initial_state_size[1:])
-  embedding = np.memmap(embedding_file + '.npy', dtype='float32', mode='w+', shape=embedding_shape)
-  embedding_m = np.memmap(embedding_file + '.m.npy', dtype='float32', mode='w+', shape=embedding_shape)
-  embedding_v = np.memmap(embedding_file + '.v.npy', dtype='float32', mode='w+', shape=embedding_shape)
+  embedding = np.memmap(embedding_file + '.npy', dtype='float32', mode='r+', shape=embedding_shape)
+  embedding_m = np.memmap(embedding_file + '.m.npy', dtype='float32', mode='r+', shape=embedding_shape)
+  embedding_v = np.memmap(embedding_file + '.v.npy', dtype='float32', mode='r+', shape=embedding_shape)
 
   dummy = np.zeros(initial_state_size)
 
